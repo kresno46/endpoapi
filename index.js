@@ -1,18 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit'); // ✅ Rate limiter
 const puppeteer = require('puppeteer');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { sequelize, News, HistoricalData } = require('./models');
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-
 app.use(cors());
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 menit
+  max: 20, // max 20 requests per IP per menit
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter); // ✅ Aktifkan global limiter
+
+
 
 let cachedNews = [];
 let cachedNewsID = [];
