@@ -479,6 +479,7 @@ async function scrapeCalendar() {
 // Scrape Live Quotes
 // =========================
 
+// Function to process the live quotes
 async function scrapeQuotes() {
   console.log('Scraping quotes from JSON endpoint...');
   const url = 'https://www.newsmaker.id/quotes/live?s=LGD+LSI+GHSIQ5+LCOPV5+SN1U5+DJIA+DAX+DX+AUDUSD+EURUSD+GBPUSD+CHF+JPY+RP';
@@ -486,12 +487,18 @@ async function scrapeQuotes() {
     const { data } = await axios.get(url);
     const quotes = [];
     for (let i = 1; i <= data[0].count; i++) {
+      // Use `last` as a fallback for high, low, and open if they are 0 or missing
+      let high = data[i].high !== 0 ? data[i].high : data[i].last;
+      let low = data[i].low !== 0 ? data[i].low : data[i].last;
+      let open = data[i].open !== 0 ? data[i].open : data[i].last;
+
+      // Push the valid data into the quotes array
       quotes.push({
         symbol: data[i].symbol,
         last: data[i].last,
-        high: data[i].high,
-        low: data[i].low,
-        open: data[i].open,
+        high: high,
+        low: low,
+        open: open,
         prevClose: data[i].prevClose,
         valueChange: data[i].valueChange,
         percentChange: data[i].percentChange
@@ -504,6 +511,7 @@ async function scrapeQuotes() {
     console.error('❌ Quotes scraping failed:', err.message);
   }
 }
+
 
 
 // =========================
@@ -977,8 +985,31 @@ app.get('/api/historical', async (req, res) => {
 });
 
 app.get('/api/quotes', (req, res) => {
-  res.json({ status: 'success', updatedAt: lastUpdatedQuotes, total: cachedQuotes.length, data: cachedQuotes });
+  // Cek jika cachedQuotes kosong atau belum ada update
+  if (cachedQuotes.length === 0) {
+    return res.status(404).json({ status: 'error', message: 'No quotes data available' });
+  }
+
+  // Validasi data sebelum mengirim ke client
+  const validQuotes = cachedQuotes.map((quote) => {
+    // Cek dan fallback jika data high, low, atau open masih 0
+    return {
+      ...quote,
+      high: quote.high !== 0 ? quote.high : quote.last,  // fallback ke 'last' jika 'high' 0
+      low: quote.low !== 0 ? quote.low : quote.last,    // fallback ke 'last' jika 'low' 0
+      open: quote.open !== 0 ? quote.open : quote.last    // fallback ke 'last' jika 'open' 0
+    };
+  });
+
+  // Kirim data yang sudah tervalidasi
+  res.json({
+    status: 'success',
+    updatedAt: lastUpdatedQuotes,
+    total: validQuotes.length,
+    data: validQuotes,
+  });
 });
+
 
 app.delete('/api/cache', async (req, res) => {
   try {
