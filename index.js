@@ -481,7 +481,7 @@ async function scrapeCalendar() {
 
 async function scrapeQuotes() {
   console.log('Scraping quotes from JSON endpoint...');
-  const url = 'https://www.newsmaker.id/quotes/live?s=LGD+LSI+GHSIN5+LCOPU5+SN1U5+DJIA+DAX+DX+AUDUSD+EURUSD+GBPUSD+CHF+JPY+RP';
+  const url = 'https://www.newsmaker.id/quotes/live?s=LGD+LSI+GHSIQ5+LCOPV5+SN1U5+DJIA+DAX+DX+AUDUSD+EURUSD+GBPUSD+CHF+JPY+RP';
   try {
     const { data } = await axios.get(url);
     const quotes = [];
