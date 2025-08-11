@@ -194,7 +194,7 @@ console.log('🚀 Scraping news EN (parallel)...');
         allTasks.push(async () => {
           try {
             const { data } = await axios.get(url, {
-              timeout: 300000,
+              timeout: 600000,
               headers: { 'User-Agent': 'Mozilla/5.0' },
             });
 
@@ -295,7 +295,7 @@ async function scrapeNewsID() {
         allTasks.push(async () => {
           try {
             const { data } = await axios.get(url, {
-              timeout: 300000,
+              timeout: 600000,
               headers: { 'User-Agent': 'Mozilla/5.0' },
             });
 
@@ -850,8 +850,8 @@ scrapeQuotes();
 scrapeAllHistoricalData();
 
 setInterval(scrapeAllHistoricalData, 60 * 60 * 1000); // Run every hour
-setInterval(scrapeNews, 30 * 60 * 1000);
-setInterval(scrapeNewsID, 30 * 60 * 1000);
+setInterval(scrapeNews, 5 * 60 * 1000);
+setInterval(scrapeNewsID, 10 * 60 * 1000);
 setInterval(scrapeCalendar, 60 * 60 * 1000);
 setInterval(scrapeQuotes, 0.15 * 60 * 1000);
 
