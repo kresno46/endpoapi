@@ -111,11 +111,12 @@ redis.on('error', (err) => console.error('❌ Redis error:', err));
 
 
 const newsCategories = [
-  'economic-news/all-economic-news',
+  'economic-news/economy',
   'economic-news/fiscal-moneter',
-  'market-news/index/all-index',
-  'market-news/commodity/all-commodity',
-  'market-news/currencies/all-currencies',
+  'market-news/index',
+  'market-news/commodity',
+  'market-news/currencies',
+  'market-news/crypto',
   'analysis/analysis-market',
   'analysis/analysis-opinion',
 ];
