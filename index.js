@@ -182,14 +182,14 @@ async function fetchNewsDetailID(url) {
 // Scrape News
 // =========================
 async function scrapeNews() {
-  console.log('🚀 Scraping news (parallel)...');
-  const pageLimit = 10;
+console.log('🚀 Scraping news EN (parallel)...');
+  const pageLimit = 5;
   const allTasks = [];
 
   try {
     for (const cat of newsCategories) {
       for (let i = 0; i < pageLimit; i++) {
-        const offset = i * 20;
+        const offset = i * 10;
         const url = `https://www.newsmaker.id/index.php/en/${cat}?start=${offset}`;
         allTasks.push(async () => {
           try {
@@ -238,7 +238,7 @@ async function scrapeNews() {
             });
 
             const detailedItems = (await runParallelWithLimit(detailTasks, 3)).filter(Boolean);
-            console.log(`🔎 ${cat} → ${detailedItems.length} new item(s) scraped`);
+            console.log(`🔎 ${cat} [EN] → ${detailedItems.length} new item(s) scraped`);
             return detailedItems;
           } catch (err) {
             console.warn(`⚠️ Failed to scrape page: ${url} | ${err.message}`);
@@ -265,17 +265,17 @@ async function scrapeNews() {
           detail: item.detail?.text || '',
           language: 'en'
         });
-        console.log(`✅ Saved to DB: ${item.title}`);
+        console.log(`✅ [EN] Saved to DB: ${item.title}`);
       } catch (err) {
-        console.error(`❌ Failed to save: ${item.title} - ${err.message}`);
+        console.error(`❌ [EN] Failed to save: ${item.title} - ${err.message}`);
       }
     }
 
-    lastUpdatedNews = new Date();
+    lastUpdatedNews= new Date();
     const keys = await redis.keys('news:*');
     if (keys.length > 0) await redis.del(...keys);
 
-    console.log(`✅ News updated (${cachedNews.length} items)`);
+    console.log(`✅ News EN updated (${cachedNews.length} items)`);
   } catch (err) {
     console.error('❌ scrapeNews failed:', err.message);
   }
@@ -284,13 +284,13 @@ async function scrapeNews() {
 
 async function scrapeNewsID() {
   console.log('🚀 Scraping news ID (parallel)...');
-  const pageLimit = 10;
+  const pageLimit = 5;
   const allTasks = [];
 
   try {
     for (const cat of newsCategories) {
       for (let i = 0; i < pageLimit; i++) {
-        const offset = i * 20;
+        const offset = i * 10;
         const url = `https://www.newsmaker.id/index.php/id/${cat}?start=${offset}`;
         allTasks.push(async () => {
           try {
